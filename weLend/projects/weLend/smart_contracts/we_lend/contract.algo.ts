@@ -1,4 +1,4 @@
-import type { Account, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import type { Account, gtxn, MutableArray, uint64 } from '@algorandfoundation/algorand-typescript'
 import {
   abimethod,
   assertMatch,
@@ -9,7 +9,6 @@ import {
   GlobalState,
   itxn,
 } from '@algorandfoundation/algorand-typescript'
-import { StaticArray } from '@algorandfoundation/algorand-typescript/arc4/encoded-types'
 
 @contract({ name: 'weLend', avmVersion: 11 })
 export class WeLend extends Contract {
@@ -17,7 +16,7 @@ export class WeLend extends Contract {
   base_token_id = GlobalState<Asset>({ initialValue: Asset() })
 
   // The collateral token of this contract - used for collateral
-  collateral_token_ids = GlobalState<StaticArray<Asset, 100>>()
+  collateral_token_ids = GlobalState<MutableArray<uint64>>()
 
   // LST token of this contract - used for borrowing - generated in the contract at creation time
   lst_token_id = GlobalState<Asset>({ initialValue: Asset() })
@@ -34,7 +33,7 @@ export class WeLend extends Contract {
   origination_fee_bps = GlobalState<uint64>()
 
   @abimethod({ allowActions: 'NoOp', onCreate: 'require' })
-  public createApplication(admin: Account, baseTokenId: Asset, collateralTokenIds: StaticArray<Asset, 100>): void {
+  public createApplication(admin: Account, baseTokenId: Asset, collateralTokenIds: MutableArray<uint64>): void {
     this.admin_account.value = admin
     this.base_token_id.value = baseTokenId
     this.collateral_token_ids.value = collateralTokenIds
